@@ -1,15 +1,13 @@
 package com.geekykel;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class PrimeNumbersGenerator {
 
     public static void main(String[] args) {
         // write your code here
         System.out.println("This Program Generates Prime Numbers Based on User Values.\n");
+
         int startValue = 0, stopValue = 0;
         boolean numberFormat = true;
 
@@ -43,7 +41,6 @@ public class PrimeNumbersGenerator {
                     stopValue = scanner.nextInt();
                 }
                 numberFormat2 = false;
-//                scanner.close();
             } else {
                 System.out.print("Only digits 0-9 are allowed\n");
                 numberFormat2 = true;
@@ -52,16 +49,15 @@ public class PrimeNumbersGenerator {
 
         System.out.println("\n=============================");
 
-
+        // set default selection to 1 for Naive Approach
         int selection = 1;
         boolean valid = false;
-
 
         Scanner scanner2 = new Scanner(System.in);
 
         while (!valid) {
 
-            System.out.print("Select 1 for BruteForce or 2 for Sieve Algorithm:  ");
+            System.out.print("Select 1 for Naive Approach or 2 for Sieve Algorithm:  ");
             try {
                 selection = scanner2.nextInt();
                 if (selection == 1 || selection == 2) {
@@ -74,21 +70,14 @@ public class PrimeNumbersGenerator {
             }
         }
 
+        List<Integer> primeNumbers = new ArrayList<>();
         switch (selection) {
             case 1:
-                bruteForce();
+                primeNumbers = naiveApproach(startValue, stopValue);
                 break;
             case 2:
-                seivePrime();
+                primeNumbers = sievePrime(startValue, stopValue);
                 break;
-        }
-
-
-        List<Integer> primeNumbers = new ArrayList<>();
-        for (int i = startValue; i <= stopValue; i++) {
-            if (numberIsAPrime(i)) {
-                primeNumbers.add(i);
-            }
         }
 
         System.out.printf("\nThe Prime Numbers Between %d and %d are:  ", startValue, stopValue);
@@ -108,6 +97,7 @@ public class PrimeNumbersGenerator {
         }
 
         for (int i = 2; i * i <= number; i++) {
+            // if remainder is 0, it is an even number
             if (number % i == 0) {
                 return false;
             }
@@ -130,13 +120,36 @@ public class PrimeNumbersGenerator {
 
     }
 
-    private static boolean seivePrime() {
-        System.out.println("Seive Algorithm ");
-        return true;
+    private static List<Integer> naiveApproach(int startValue, int stopValue) {
+        System.out.println("Naive Approach");
+        List<Integer> primeNumbers = new ArrayList<>();
+        for (int i = startValue; i <= stopValue; i++) {
+            if (numberIsAPrime(i)) {
+                primeNumbers.add(i);
+            }
+        }
+        return primeNumbers;
     }
 
-    private static boolean bruteForce() {
-        System.out.println("BruteForce Approach");
-        return true;
+    private static List<Integer> sievePrime(int startValue, int stopValue) {
+        System.out.println("Sieve Algorithm ");
+        boolean prime[] = new boolean[stopValue+1];
+        // set all to true
+        Arrays.fill(prime, true);
+        for (int i = startValue; i * i <= stopValue; i++) {
+            if (prime[i]) {
+                for (int j = i * 2; j <= stopValue; j += i) {
+                    prime[j] = false;
+                }
+            }
+        }
+
+        List<Integer> primeNumbers = new ArrayList<>();
+        for (int i = startValue; i <= stopValue; i++) {
+            if (prime[i]) {
+                primeNumbers.add(i);
+            }
+        }
+        return primeNumbers;
     }
 }
